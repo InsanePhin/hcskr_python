@@ -1,7 +1,7 @@
 from typing import Dict
 
 import aiohttp
-from aiohttp.client_exceptions import ServerDisconnectedError, ClientConnectionError
+from aiohttp.client_exceptions import ServerDisconnectedError, ClientConnectionError, ClientConnectorCertificateError
 
 
 async def send_hcsreq(
@@ -19,11 +19,10 @@ async def send_hcsreq(
                 json=json,
             ) as resp:
                 return await resp.json()
-        except ServerDisconnectedError as e:
+        except (ServerDisconnectedError, ClientConnectionError, ClientConnectorCertificateError) as e:
             if attempt >= 4:
                 raise e
             continue
-
 
 async def search_school(code: str, level: str, org: str):
     for attempt in range(5):
@@ -33,11 +32,7 @@ async def search_school(code: str, level: str, org: str):
                     url=f"https://hcs.eduro.go.kr/v2/searchSchool?lctnScCode={code}&schulCrseScCode={level}&orgName={org}&loginType=school"
                 ) as resp:
                     return await resp.json()
-        except ServerDisconnectedError as e:
-            if attempt >= 4:
-                raise e
-            continue
-        except ClientConnectionError as e:
+        except (ServerDisconnectedError, ClientConnectionError, ClientConnectorCertificateError) as e:
             if attempt >= 4:
                 raise e
             continue
