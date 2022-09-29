@@ -187,7 +187,7 @@ async def asyncChangePassword(
                     "Content-Type": "application/json",
                     "Authorization": login_result["token"],
                 },
-                endpoint="/v2/changePassword",
+                endpoint="/v3/changePassword",
                 school=login_result["info"]["schoolurl"],
                 json={
                     "password": encrypt(password),
